@@ -16,8 +16,8 @@ import sys.FileSystem;
 
 class EnvironmentSetup
 {
-    private static var airMacPath = "http://airdownload.adobe.com/air/mac/download/latest/AdobeAIRSDK.tbz2";
-    private static var airWindowsPath = "http://airdownload.adobe.com/air/win/download/latest/AdobeAIRSDK.zip";
+    private static var airMacPath = "http://airdownload.adobe.com/air/mac/download/latest/AIRSDK_Compiler.tbz2";
+    private static var airWindowsPath = "http://airdownload.adobe.com/air/win/download/latest/AIRSDK_Compiler.zip";
     private static var flashDebuggerMacPath = "http://fpdownload.macromedia.com/pub/flashplayer/updaters/14/flashplayer_14_sa.dmg";
     private static var flashDebuggerWindowsPath = "http://download.macromedia.com/pub/flashplayer/updaters/14/flashplayer_14_sa.exe";
     private static var flashPlayerSystemPluginPath = "http://get.adobe.com/flashplayer/otherversions/";
@@ -163,7 +163,7 @@ class EnvironmentSetup
             LogHelper.error("Could not find the home folder, no HOME variable is set. Can't find hxcpp_config.xml");
         }
 
-        var hxcppXML = new HXCPPConfigXML(hxcppConfigPath);
+        var hxcppXML = HXCPPConfigXML.getConfig(hxcppConfigPath);
 
         var existingDefines : Map<String, String> = hxcppXML.getDefines();
 
