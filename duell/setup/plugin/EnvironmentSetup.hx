@@ -9,10 +9,14 @@ import duell.helpers.LogHelper;
 import duell.helpers.StringHelper;
 import duell.helpers.ProcessHelper;
 import duell.helpers.HXCPPConfigXMLHelper;
+import duell.helpers.DuellConfigHelper;
+
 import duell.objects.HXCPPConfigXML;
 
 import haxe.io.Path;
 import sys.FileSystem;
+
+using StringTools;
 
 class EnvironmentSetup
 {
@@ -74,49 +78,51 @@ class EnvironmentSetup
 
     private function downloadAirSDK()
     {
-/// variable setup
+
+        /// variable setup
         var downloadPath = "";
         var defaultInstallPath = "";
 
-        if(PlatformHelper.hostPlatform == Platform.WINDOWS)
+        defaultInstallPath = haxe.io.Path.join([DuellConfigHelper.getDuellConfigFolderLocation(), "SDKs", "adobeair"]);
+
+        if (PlatformHelper.hostPlatform == Platform.WINDOWS)
         {
             downloadPath = airWindowsPath;
-            defaultInstallPath = "C:\\Development\\Android SDK";
         }
-        else if(PlatformHelper.hostPlatform == Platform.MAC)
+        else if (PlatformHelper.hostPlatform == Platform.MAC)
         {
             downloadPath = airMacPath;
-            defaultInstallPath = "/opt/air-sdk";
         }
 
         var downloadAnswer = AskHelper.askYesOrNo("Download and install the Adobe AIR SDK?");
 
-/// ask for the instalation path
+        /// ask for the instalation path
         airSDKPath = AskHelper.askString("Air SDK Location", defaultInstallPath);
 
-/// clean up a bit
-        airSDKPath = PathHelper.unescape(airSDKPath);
-        airSDKPath = StringHelper.strip(airSDKPath);
+        /// clean up a bit
+        airSDKPath = airSDKPath.trim();
 
         if(airSDKPath == "")
             airSDKPath = defaultInstallPath;
 
+        airSDKPath = resolvePath(airSDKPath);
+
         if(downloadAnswer)
         {
-/// the actual download
+            /// the actual download
             DownloadHelper.downloadFile(downloadPath);
 
-/// create the directory
+            /// create the directory
             PathHelper.mkdir(airSDKPath);
 
-/// the extraction
+            /// the extraction
             ExtractionHelper.extractFile(Path.withoutDirectory(downloadPath), airSDKPath, "");
         }
     }
 
     private function downloadFlashDebugger()
     {
-/// variable setup
+        /// variable setup
         var downloadPath = "";
         var defaultInstallPath = "";
 
@@ -133,11 +139,11 @@ class EnvironmentSetup
 
         if(downloadAnswer)
         {
-/// the actual download
+            /// the actual download
             DownloadHelper.downloadFile(downloadPath);
 
             LogHelper.info("Running installer " + Path.withoutDirectory(downloadPath));
-// running the installer
+            // running the installer
             ProcessHelper.runInstaller(Path.withoutDirectory(downloadPath));
         }
 
@@ -203,5 +209,16 @@ class EnvironmentSetup
         defines.set("AIR_SETUP", "YES");
 
         return defines;
+    }
+
+
+    private function resolvePath(path : String) : String
+    {
+        path = PathHelper.unescape(path);
+        
+        if (PathHelper.isPathRooted(path))
+            return path;
+
+        return Path.join([Sys.getCwd(), path]);
     }
 }
