@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugin>
+	<documentation>
+    Use this plugin to setup the flash platform. It downloads the Adobe Air SDK and asks for the system plugin and the flash debugger. The last two are not installed by the setup script, but are there as a reminder that they should be installed.
+	</documentation>
+	<configuration>
+	</configuration>
+</plugin>
+
+
