@@ -7,7 +7,7 @@ import duell.helpers.ExtractionHelper;
 import duell.helpers.PathHelper;
 import duell.helpers.LogHelper;
 import duell.helpers.StringHelper;
-import duell.helpers.ProcessHelper;
+import duell.helpers.CommandHelper;
 import duell.helpers.HXCPPConfigXMLHelper;
 import duell.helpers.DuellConfigHelper;
 
@@ -50,15 +50,14 @@ class EnvironmentSetup
             LogHelper.println("");
 
             LogHelper.println("Installing the air haxelib...");
-            ProcessHelper.runCommand ("", "haxelib", [ "install", "air3" ], true, true);
+
+            var haxePath = Sys.getEnv("HAXEPATH");
+            var systemCommand = haxePath != null && haxePath != "" ? false : true;
+            CommandHelper.runCommand(haxePath, "haxelib", ["install", "air3"], {systemCommand: systemCommand, errorMessage: "installing air3 library"});
 
             LogHelper.println("");
 
             downloadFlashPlayer();
-
-            LogHelper.println("");
-
-            downloadFlashDebugger();
 
             LogHelper.println("");
 
@@ -120,43 +119,13 @@ class EnvironmentSetup
         }
     }
 
-    private function downloadFlashDebugger()
-    {
-        /// variable setup
-        var downloadPath = "";
-        var defaultInstallPath = "";
-
-        if(PlatformHelper.hostPlatform == Platform.WINDOWS)
-        {
-            downloadPath = flashDebuggerWindowsPath;
-        }
-        else if(PlatformHelper.hostPlatform == Platform.MAC)
-        {
-            downloadPath = flashDebuggerMacPath;
-        }
-
-        var downloadAnswer = AskHelper.askYesOrNo("Download and install the Flash Debugger?");
-
-        if(downloadAnswer)
-        {
-            /// the actual download
-            DownloadHelper.downloadFile(downloadPath);
-
-            LogHelper.info("Running installer " + Path.withoutDirectory(downloadPath));
-            // running the installer
-            ProcessHelper.runInstaller(Path.withoutDirectory(downloadPath));
-        }
-
-        LogHelper.println("You additionally need to associate .swf files with the debugger.");
-    }
-
     private function downloadFlashPlayer()
     {
         var answer = AskHelper.askYesOrNo("Go to the flash website and download the Flash Player System plugin?");
 
         if(answer)
         {
-            ProcessHelper.openURL(flashPlayerSystemPluginPath);
+            CommandHelper.openURL(flashPlayerSystemPluginPath);
         }
     }
 
