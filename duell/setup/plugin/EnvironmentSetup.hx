@@ -63,40 +63,33 @@ class EnvironmentSetup
 
     public function setup() : String
     {
-        try
-        {
-            LogHelper.info("");
-            LogHelper.info("\x1b[2m------");
-            LogHelper.info("Flash Setup");
-            LogHelper.info("------\x1b[0m");
-            LogHelper.info("");
+        LogHelper.info("");
+        LogHelper.info("\x1b[2m------");
+        LogHelper.info("Flash Setup");
+        LogHelper.info("------\x1b[0m");
+        LogHelper.info("");
 
-            downloadAirSDK();
+        downloadAirSDK();
 
-            LogHelper.println("");
+        LogHelper.println("");
 
-            LogHelper.println("Installing the air haxelib...");
+        LogHelper.println("Installing the air haxelib...");
 
-            var haxePath = Sys.getEnv("HAXEPATH");
-            var systemCommand = haxePath != null && haxePath != "" ? false : true;
-            CommandHelper.runCommand(haxePath, "haxelib", ["install", "air3"], {systemCommand: systemCommand, errorMessage: "installing air3 library"});
+        var haxePath = Sys.getEnv("HAXEPATH");
+        var systemCommand = haxePath != null && haxePath != "" ? false : true;
+        CommandHelper.runCommand(haxePath, "haxelib", ["install", "air3"], {systemCommand: systemCommand, errorMessage: "installing air3 library"});
 
-            LogHelper.println("");
+        LogHelper.println("");
 
-            downloadFlashPlayer();
+        downloadFlashPlayer();
 
-            LogHelper.println("");
+        LogHelper.println("");
 
-            setupHXCPP();
+        setupHXCPP();
 
-            LogHelper.info("\x1b[2m------");
-            LogHelper.info("end");
-            LogHelper.info("------\x1b[0m");
-
-        } catch(error : Dynamic)
-        {
-            LogHelper.error("An error occurred, do you need admin permissions to run the script? Check if you have permissions to write on the paths you specify. Error:" + error);
-        }
+        LogHelper.info("\x1b[2m------");
+        LogHelper.info("end");
+        LogHelper.info("------\x1b[0m");
 
         return "success";
     }
@@ -161,7 +154,7 @@ class EnvironmentSetup
 
         if(hxcppConfigPath == null)
         {
-            LogHelper.error("Could not find the home folder, no HOME variable is set. Can't find hxcpp_config.xml");
+            throw "Could not find the home folder, no HOME variable is set. Can't find hxcpp_config.xml";
         }
 
         var hxcppXML = HXCPPConfigXML.getConfig(hxcppConfigPath);
@@ -198,7 +191,7 @@ class EnvironmentSetup
         }
         else
         {
-            LogHelper.error("Path specified for air SDK doesn't exist!");
+            throw "Path specified for air SDK doesn't exist!";
         }
 
         defines.set("AIR_SETUP", "YES");
@@ -210,7 +203,7 @@ class EnvironmentSetup
     private function resolvePath(path : String) : String
     {
         path = PathHelper.unescape(path);
-        
+
         if (PathHelper.isPathRooted(path))
             return path;
 
